@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html ng-app='silexIndex'>
+<head>
+	<meta charset="UTF-8">
+	<title>Silex Index</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+ 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+	<script type='text/javascript' src='../script.js'></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+	label, select{
+		margin: 1% 0 1% 0;
+	}
+	button, input{
+		margin: 3% 0 1% 0;
+	}
+	</style>
+</head>
+<body>
+	<nav class='navbar navbar-default'>
+		<div class='container-fluid'>
+			<div class='navbar-header'>
+				<button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#silexMobileMenu'>
+					<span class='sr-only'>toggle navigation</span>
+					<span class='icon-bar'></span>
+					<span class='icon-bar'></span>
+					<span class='icon-bar'></span>
+				</button>
+				<a class='navbar-brand' href='/'><img alt='silexlogo' src='../images/silexlogo.png'/></a>
+			</div>
+			<div class='collapse navbar-collapse' id='silexMobileMenu'>
+				<ul class='nav navbar-nav navbar-right'>
+					<li><a href='#' class='active'>Add Your Marketing Firm</a></li>
+					<li><a href='about.html'>About</a></li>
+					<li><a href="tel:816-213-0173">816-213-0173</a></li>
+					<li><a href='mailto:flint@silex.rocks?Subject=We%20Need%20Help!' target='_top'>flint@silex.rocks</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class='container' ng-controller='createController'>
+		<div class='row'>
+			<div class='col-sm-8 col-sm-offset-2 well well-sm'>
+<!-- begin form -->
+				<form class='form-horizontal ng-hide' ng-submit='newIndex()' ng-show='showForm'>
+				<div class='col-sm-12'>
+					<h4 class='text-center text-primary'>Add your marketing services firm to the Silex Index.</h4>
+				</div>
+				<div class='form-group'>
+					<label class='col-sm-2 control-label'>company:</label>
+					<div class='col-sm-8'>
+						<input class='form-control' placeholder='marketing services firm name'
+					   			ng-model='newfirm.firmname' required/>
+					</div>
+				</div>
+				<div class='form-group'>
+					<label class='col-sm-2 control-label'>name:</label>
+					<div class='col-sm-8'>
+						<input class='form-control' placeholder='contacts name'
+					   			ng-model='newfirm.contact' required/>
+					</div>
+				</div>
+				<div class='form-group'>
+					<label class='col-sm-2 control-label'>phone:</label>
+					<div class='col-sm-8'>
+						<input class='form-control' placeholder='contacts phone number'
+					   			ng-model='newfirm.phone' required/>
+				</div>
+				</div>
+				<div class='form-group'>
+					<label class='col-sm-2 control-label'>email:</label>
+					<div class='col-sm-8'>
+						<input class='form-control' placeholder='contacts email'
+					   			ng-model='newfirm.email' required/>
+					</div>
+				</div>
+				<div class='form-group'>
+					<label class='col-sm-2 control-label'>website:</label>
+					<div class='col-sm-8'>
+						<input class='form-control' placeholder='www.website.com'
+					   			ng-model='newfirm.web' required/>
+				</div>
+				</div>
+				<div class='form-group'>
+					<label class='col-sm-2 control-label'>address:</label>
+					<div class='col-sm-8'>
+						<input class='form-control' placeholder='street'
+					   			ng-model='newfirm.street' required/>
+			   		</div>
+		   		</div>
+		   		<div class='form-group'>
+		   			<label class='col-sm-2 control-label'>address:</label>
+					<div class='col-sm-3'>
+						<input class='form-control' placeholder='city'
+					   			ng-model='newfirm.city' required/>
+					</div>
+					<div class='col-sm-3'>
+						<input class='form-control' placeholder='state'
+					   			ng-model='newfirm.state' required/>
+					</div>
+					<div class='col-sm-2'>
+						<input class='form-control' placeholder='zip'
+					   			ng-model='newfirm.zip' required/>
+					</div>
+				</div>			
+		   		<div class='form-group'>
+		   			<label class='col-sm-9 col-sm-offset-1'>Select the greater metro area where you consider your firm located.</label>
+					<div class='col-sm-8 col-sm-offset-2'>
+						<select class='form-control' ng-model='newfirm.metroarea' required>
+							<option value=''>select from list:</option>
+							<!-- <option value='Dallas'>Dallas/Fort Worth</option> -->
+							<!-- <option value='Denver'>Denver</option> -->
+							<option value='Kansas City'>Kansas City</option>
+							<!-- <option value='St. Louis'>St.Louis</option> -->
+							<!-- <option value='Minneapolis'>Minneapolis/St.Paul</option> -->
+						</select>
+					</div>
+				</div>
+		   		<div class='form-group'>
+		   			<label class='col-sm-9 col-sm-offset-1'>Select up to three industries where you consider your firm to have expertise based on current and past clients <small>(selecting industries creates more opportunites with future clients)</small></label>
+					<div class='col-sm-8 col-sm-offset-2'>
+						<label>
+						<input type='checkbox' ng-change='selectAllIndustries()' ng-model='newfirm.industryall'/><strong>&nbsp;or check All Industries (no specialization)</strong></label>
+					</div>
+					<div class='col-sm-8 col-sm-offset-2 ng-hide' ng-show='hideIndustries'>
+						<select class='form-control' ng-model='newfirm.industry1'>
+							<option value=''>select from list:</option>
+							<option value='all'>All Inustries (no specialization)</option>
+							<option value='Auto'>Auto/Transportation</option>
+							<option value='Agriculture'>Agriculture/Animal Health</option>
+							<option value='Construction'>Architecture, Engineering, Construction</option>
+							<option value='Retail'>Consumer Products/Retail</option>
+							<option value='Education'>Education</option>
+							<option value='Entertainment'>Entertainment</option>
+							<option value='Energy'>Energy/Utilities</option>
+							<option value='Financial'>Financial</option>
+							<option value='Food Beverage'>Food &amp; Beverage</option>
+							<option value='Healthcare'>Healthcare</option>
+							<option value='Legal'>Legal</option>
+							<option value='Manufacturing'>Manufacturing</option>
+							<option value='Media'>Media/Publishing</option>
+							<option value='Materials'>Raw Materials/Chemicals</option>
+							<option value='Technology'>Technology</option>
+							<option value='Travel Hospitality'>Travel &amp; Tourism/Hospitality</option>
+						</select>
+						<select class='form-control' ng-model='newfirm.industry2'>
+							<option value=''>select from list:</option>
+							<option value='all'>All Inustries (no specialization)</option>
+							<option value='Auto'>Auto/Transportation</option>
+							<option value='Agriculture'>Agriculture/Animal Health</option>
+							<option value='Construction'>Architecture, Engineering, Construction</option>
+							<option value='Retail'>Consumer Products/Retail</option>
+							<option value='Education'>Education</option>
+							<option value='Entertainment'>Entertainment</option>
+							<option value='Energy'>Energy/Utilities</option>
+							<option value='Financial'>Financial</option>
+							<option value='Food Beverage'>Food &amp; Beverage</option>
+							<option value='Healthcare'>Healthcare</option>
+							<option value='Legal'>Legal</option>
+							<option value='Manufacturing'>Manufacturing</option>
+							<option value='Media'>Media/Publishing</option>
+							<option value='Materials'>Raw Materials/Chemicals</option>
+							<option value='Technology'>Technology</option>
+							<option value='Travel Hospitality'>Travel &amp; Tourism/Hospitality</option>
+						</select>
+						<select class='form-control' ng-model='newfirm.industry3'>
+							<option value=''>select from list:</option>
+							<option value='all'>All Inustries (no specialization)</option>
+							<option value='Auto'>Auto/Transportation</option>
+							<option value='Agriculture'>Agriculture/Animal Health</option>
+							<option value='Construction'>Architecture, Engineering, Construction</option>
+							<option value='Retail'>Consumer Products/Retail</option>
+							<option value='Education'>Education</option>
+							<option value='Entertainment'>Entertainment</option>
+							<option value='Energy'>Energy/Utilities</option>
+							<option value='Financial'>Financial</option>
+							<option value='Food Beverage'>Food &amp; Beverage</option>
+							<option value='Healthcare'>Healthcare</option>
+							<option value='Legal'>Legal</option>
+							<option value='Manufacturing'>Manufacturing</option>
+							<option value='Media'>Media/Publishing</option>
+							<option value='Materials'>Raw Materials/Chemicals</option>
+							<option value='Technology'>Technology</option>
+							<option value='Travel Hospitality'>Travel &amp; Tourism/Hospitality</option>
+						</select>
+					</div>
+				<div class='col-sm-8 col-sm-offset-2 alert alert-danger ng-hide' 
+					 ng-show='createIndustrySelectError'>
+					<p class='text-center'>Please select a unique industry per menu.</p>
+				</div>
+				</div>
+		   		<div class='form-group'>
+		   			<label class='col-sm-9 col-sm-offset-1'>Check all the marketing service capabilities that your firm possess based on the capabilities of your current employees.</label>
+					<div class='col-sm-4 col-sm-offset-2'>
+						<div class='checkbox'>
+							<label data-toggle='tooltip' data-placement='right' title='research, strategy, identity, awareness, annual marketing planning with tactics'>
+								<input type='checkbox' ng-model='newfirm.brand'/>
+								<strong>&nbsp;Branding</strong>
+							</label>
+						</div>
+						<div class='checkbox'>
+							<label data-toggle='tooltip' data-placement='right' title='logo design, website design, digital presentations, graphics, signage, sales collateral, printed pieces'>
+								<input type='checkbox' ng-model='newfirm.design'/>
+								<strong>&nbsp;Design/Web Dev</strong>
+							</label>
+						</div>
+						<div class='checkbox'>
+							<label data-toggle='tooltip' data-placement='right' title='consumer demographics, promotion strategy, creative ideas, production management'>
+								<input type='checkbox' ng-model='newfirm.ad'/>
+								<strong>&nbsp;Advertising</strong>
+							</label>
+						</div>
+					</div>
+					<div class='col-sm-4'>
+						<div class='checkbox'>
+							<label data-toggle='tooltip' data-placement='right' title='communication plan, social media, press releases, list of meida outlets, word of mouth'>
+								<input type='checkbox' ng-model='newfirm.pr'/>
+								<strong>&nbsp;PR/Social Media</strong>
+							</label>
+						</div>
+						<div class='checkbox'>
+							<label data-toggle='tooltip' data-placement='right' title='production plan, casting, shot list, video shoots, video editing, animation, motion graphics'>
+								<input type='checkbox' ng-model='newfirm.av'/>
+								<strong>A/V Production</strong>
+							</label>
+						</div>
+						<div class='checkbox'>
+							<label data-toggle='tooltip' data-placement='right' title='digital display, paid search, TV, radio, print, billboard, media budget planning, buying, insertion, results tracking'>
+								<input type='checkbox' ng-model='newfirm.media'/>
+								<strong>Paid Media/Search</strong>
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class='col-sm-8 col-sm-offset-2 alert alert-danger ng-hide' ng-show='createError'>
+					<p class='text-center'>Please select at least one capability.</p>
+				</div>
+				<div class='col-sm-4 col-sm-offset-8'>
+					<input type='submit' class='btn btn-block btn-primary'
+						   value='Add Your Firm'/>
+					<p>&nbsp;</p>
+				</div>
+				</form>
+				<div class='col-sm-8 col-sm-offset-2 well well-sm ng-hide' ng-show='createSuccess'>
+					<p class='alert alert-success'>Thank you for adding your marketing firm to the Silex Index.<br>We will be in contact when there is an opportunity with a potential client.</p>
+					<p>ID: {{result._id}}</p>
+					<p>Firm name: {{result.firmname}}</p>
+					<p>Contact: {{result.contact}}</p>
+					<p>Phone: {{result.phone}}</p>
+					<p>Email: {{result.email}}</p>
+					<p>Street: {{result.street}}</p>
+					<p>City: {{result.city}} State: {{result.state}} Zip: {{result.zip}} </p>
+					<p>Metro Area: {{result.metroarea}}</p>
+					<p>Industry Expertise: {{result.industries[0]}}</p>
+					<p>Industry Expertise: {{result.industries[1]}}</p>
+					<p>Industry Expertise: {{result.industries[2]}}</p>
+					<p>Marketing Service Capabilities:</p>
+					<ul>
+						<li>Branding: {{result.brand}}</li>
+						<li>Design/Web Dev: {{result.design}}</li>
+						<li>Advertising: {{result.ad}}</li>
+						<li>Audio Video Production: {{result.av}}</li>
+						<li>PR/Social Media: {{result.pr}}</li>
+						<li>Paid Media/Search: {{result.media}}</li>
+					</ul>
+					<a class='btn btn-default' href='addfirm.html'>Add another marketing firm</a>
+				</div>
+			</div>
+		</div>
+		<div class='row'>
+			<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+		</div>
+	</div>
+	<nav class='navbar navbar-default navbar-fixed-bottom'>
+	    <div class='container'>
+	      <p class='navbar-text small'>All original content &copy Copyright 2015 Silex All Rights Reserved.<br>
+	       <a href='http://silex.rocks/'>Silex Marketing Consulting</a> | 107 W 9th Street Floor 2 | Kansas City, MO 64105</p>
+	       <p class='navbar-text navbar-right'><img src='../images/silexlogofoot.png'></p>
+	     </div>
+  	</nav>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

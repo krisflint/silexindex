@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html ng-app='silexIndex'>
+<head>
+	<meta charset="UTF-8">
+	<title>Silex Index</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+ 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+	<script type='text/javascript' src='../script.js'></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+	.searchlabel{
+		margin: 20% 0 2% 0;
+	}
+	.checkbox{
+		margin: 0 1% 0 2%;
+	}
+	.searchbutton{
+		margin: 10% 0 0 0;
+	}
+	</style>
+</head>
+<body>
+	<nav class='navbar navbar-default'>
+		<div class='container-fluid'>
+			<div class='navbar-header'>
+				<a class='navbar-brand' href='/'><img alt='silexlogo' src='../images/silexlogo.png'/></a>
+			</div>
+		</div>
+	</nav>
+</body>
+</html>
+	<div class='container' ng-controller='retrieveClientSearch'>
+		<div class='row well well-sm'>
+			<div class='col-sm-12'>
+<!-- begin form -->
+				<form class='form-inline'>
+					<span class='h4'>Select category:</span>
+					<div class='checkbox'>
+						<label data-toggle='tooltip' data-placement='bottom' title='research, strategy, identity, awareness, annual marketing planning with tactics'>
+							<input type='checkbox' value='brand' ng-model='firm.brand'/>
+							<strong>&nbsp;Branding</strong>
+						</label>
+					</div>
+					<div class='checkbox'>
+						<label data-toggle='tooltip' data-placement='bottom' title='logo design, website design, coding, digital presentations, graphics, signage, sales collateral, printed pieces'>
+							<input type='checkbox' value='design' ng-model='firm.design'/>
+							<strong>&nbsp;Design/Web Dev</strong>
+						</label>
+					</div>
+					<div class='checkbox'>
+						<label data-toggle='tooltip' data-placement='bottom' title='consumer demographics, promotion strategy, creative ideas, production management'>
+							<input type='checkbox' value='ad' ng-model='firm.ad'/>
+							<strong>&nbsp;Advertising</strong>
+						</label>
+					</div>
+					<div class='checkbox'>
+						<label data-toggle='tooltip' data-placement='bottom' title='communication plan, social media, press releases, list of meida outlets, word of mouth'>
+							<input type='checkbox' value='pr' ng-model='firm.pr'/>
+							<strong>&nbsp;PR/Social Media</strong>
+						</label>
+					</div>
+					<div class='checkbox'>
+						<label data-toggle='tooltip' data-placement='bottom' title='production planning, casting, shot list, video shoots, video editing, animation, motion graphics'>
+							<input type='checkbox' value='av' ng-model='firm.av'/>
+							<strong>A/V Production</strong>
+						</label>
+					</div>
+					<div class='checkbox'>
+						<label data-toggle='tooltip' data-placement='bottom' title='digital display, paid search, TV, radio, print, billboard, media budget planning, buying, insertion, results tracking'>
+							<input type='checkbox' value='media' ng-model='firm.media'/>
+							<strong>Paid Media/Search</strong>
+						</label>
+					</div>	
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col-sm-2 well well-sm'>
+				<p class='h4'>Industry</p>
+				<select class='form-control' data-toggle='tooltip' data-placement='right' title='industry of your business where the marketing service firm has expertise' ng-model='firm.industry' required>
+					<option value=''>select from list:</option>
+					<option value='all'>All Industries (no specialization)</option>
+					<option value='Auto'>Auto/Transportation</option>
+					<option value='Agriculture'>Agriculture/Animal Health</option>
+					<option value='Construction'>Architecture, Engineering, Construction</option>
+					<option value='Retail'>Consumer Products/Retail</option>
+					<option value='Education'>Education</option>
+					<option value='Entertainment'>Entertainment</option>
+					<option value='Energy'>Energy/Utilities</option>
+					<option value='Financial'>Financial</option>
+					<option value='Food Beverage'>Food &amp; Beverage</option>
+					<option value='Healthcare'>Healthcare</option>
+					<option value='Legal'>Legal</option>
+					<option value='Manufacturing'>Manufacturing</option>
+					<option value='Media'>Media/Publishing</option>
+					<option value='Materials'>Raw Materials/Chemicals</option>
+					<option value='Technology'>Technology</option>
+					<option value='Travel Hospitality'>Travel &amp; Tourism/Hospitality</option>
+				</select>
+				<p class='h4 searchlabel'>City <small>(metro area)</small></p>
+				<select class='form-control'data-toggle='tooltip' data-placement='right' title='city where you are looking for a marketing service company' 
+				ng-model='firm.metroarea' required>
+					<option value=''>select from list:</option>
+					<option value='all'>All Cities</option>
+<!-- 					<option value='Dallas'>Dallas/Fort Worth</option>
+					<option value='Denver'>Denver</option> -->
+					<option value='Kansas City'>Kansas City</option>
+<!-- 					<option value='St. Louis'>St.Louis</option>
+					<option value='Minneapolis'>Minneapolis/St.Paul</option> -->
+				</select>
+				<a href='#/result'><button class='btn btn-primary btn-block searchbutton'
+				 	ng-click='retrieveClientSearch()'>Find Marketing Firms</button></a>
+				</form>
+			</div>
+			<div class='col-sm-10'>
+				<h2>Search Results</h2>
+				<table class='table table-bordered table-striped'>
+					<thead>
+						<tr>
+							<th>Firm</th>
+							<th>Contact</th>
+							<th>Phone</th>
+							<th>Email</th>
+							<th>Address</th>
+							<th>Metro</th>
+							<th>Industries</th>
+							<th>Brand</th>
+							<th>Design</th>
+							<th>Ad</th>
+							<th>PR</th>
+							<th>AV</th>
+							<th>Media</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat='item in result'>
+							<td> {{item.firmname}} </td>
+							<td> {{item.contact}} </td>
+							<td> {{item.phone}} </td>
+							<td> {{item.email}} </td>
+							<td> {{item.street}} {{item.city}} {{item.state}}</td>
+							<td> {{item.metroarea}} </td>
+							<td> {{item.industries[0]}} {{item.industries[1]}} {{item.industries[2]}}</td>
+							<td> {{item.brand}}</td>
+							<td> {{item.design}}</td>
+							<td> {{item.ad}}</td>
+							<td> {{item.pr}}</td>
+							<td> {{item.av}}</td>
+							<td> {{item.media}}</td>
+						</tr>
+					</tbody>
+				</table>
+
+
+			</div>
+		</div>
+		<div class='row well well-sm'>
+			<div class='col-sm-12'>
+				<h2>User List</h2>
+				<table class='table table-bordered table-striped'>
+					<thead>
+						<tr>
+							<th>Date Created</th>
+							<th>User Name</th>
+							<th>Company</th>
+							<th>Email</th>
+							<th>Phone</th>
+							<th>Search Industry</th>
+							<th>Search Metro Area</th>
+							<th>Brand</th>
+							<th>Design</th>
+							<th>Ad</th>
+							<th>PR</th>
+							<th>AV</th>
+							<th>Media</th>
+							<th>search matches</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="user in users | orderBy:'created_at'">
+							<td>{{user.created_at | date: "MMMM dd yyyy" }}</td>
+							<td>{{user.name}}</td>
+							<td>{{user.company}}</td>
+							<td>{{user.email}}</td>
+							<td>{{user.phone}}</td>
+							<td>{{user.searchindustry}}</td>
+							<td>{{user.searchmetroarea}}</td>
+							<td>{{user.searchbrand}}</td>
+							<td>{{user.searchdesign}}</td>
+							<td>{{user.searchad}}</td>
+							<td>{{user.searchpr}}</td>
+							<td>{{user.searchav}}</td>
+							<td>{{user.searchmedia}}</td>
+							<td>{{user.searchcount}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

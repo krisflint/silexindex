@@ -1,0 +1,74 @@
+<div ng-controller='searchResultController'>
+	<div class='col-sm-11 col-sm-offset-1 ng-hide' ng-show='showSearchFirmCount'>
+		<h4>search result:</h4>
+		<p class='h4 ng-hide' ng-show='searchFirmSuccessShowUserForm'>There are <span class='h2 text-info'>{{result.count}}</span> marketing service firms that match your criteria.</p>
+		<h4>You searched for marketing service firms with these capabilities:</h4>
+		<h3 class='text-danger ng-hide' ng-show='searchFirmCapabilityError'>Please select at least one capability.</h3>
+		<h3 class='text-info'>
+			 {{result.category1}} {{result.category2}} {{result.category3}}
+			 {{result.category4}} <br> {{result.category5}} {{result.category6}}
+		</h3>
+		<p class='h4'>With expertise in <span class='h3 text-info'>{{result.industry}}</span> industry. <span class='h3 text-danger ng-hide' ng-show='searchFirmIndustryError'>Please select an industry.</span></p>
+		<p class='h4'>Based in <span class='h3 text-info'>{{result.metroarea}}</span> metro area. <span class='h3 text-danger ng-hide' ng-show='searchFirmCityError'>Please select a city.</span></p>
+	</div>
+	<div class='col-sm-10 col-sm-offset-1 ng-hide' ng-show='searchFirmSuccessShowUserForm'>
+			<h5 class='text-primary'>Are there to few marketing service companies that fit your criteria?</h5>
+		   	<p>Try checking more or fewer marketing service capability categories.<br>
+		   	Or try selecting All Industries (no speacilization)<br>
+		   	Or try selecting All Cities.</p>
+			<h4 class='text-primary'>When your search results are correct please complete this form
+			<br>to be introduced to the marketing service firms that fit your criteria.</h4>
+		<div class='row'>
+			<div class='form-group col-sm-5'>
+				<label>Your Name</label>
+				<input type='text' class='form-control' ng-model='newuser.name' required/>
+				<p class='text-danger ng-hide' ng-show='nameerror'>Please enter your name</p>
+			</div>
+			<div class='form-group col-sm-5'>
+				<label>Company</label>
+				<input type='text' class='form-control' ng-model='newuser.company' required/>
+				<p class='text-danger ng-hide' ng-show='companyerror'>Please enter your company</p>
+			</div>
+		</div>
+		<div class='row'>
+			<div class='form-group col-sm-5'>
+				<label>Email</label>
+				<input type='email' class='form-control' ng-model='newuser.email' required/>
+				<p class='text-danger ng-hide' ng-show='emailerror'>Please enter your email</p>
+			</div>
+			<div class='form-group col-sm-5'>
+				<label>Phone</label>
+				<input type='text' class='form-control' ng-model='newuser.phone' required/>
+				<p class='text-danger ng-hide' ng-show='phoneerror'>Please enter a phone number</p>
+			</div>
+		</div>
+		<div class='row'>
+			<div class='form-group col-sm-3 col-sm-offset-7'>
+				<button class='btn btn-primary pull-right' ng-click='newUser()'>Be Introduced</button>
+			</div>
+		</div>
+	</div>
+	<div class='jumbotron ng-hide'  ng-show='showSearchUserResult'>
+		<h1>Thank You {{showuser.name}},</h1>
+		<h2 class='text-info'>for submiting your request to Silex Marketing Consulting.</h2>
+		<p>We will notify the marketing service companies in our database who possess the capabilities of:
+		{{search.category1}} {{search.category2}} {{search.category3}} 
+		{{search.category4}} {{search.category5}} {{search.category6}}
+		with expertise in {{search.industry}} industry located in {{search.metroarea}} metro area.</p>
+		<p>We will email you within 24 hours at {{showuser.email}} to arrange a time to discuss our proven process to find the best marketing service firm for {{showuser.company}}.</p>
+		<h4>&nbsp;</h4>
+	</div>
+	<div class='row'>
+		<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
