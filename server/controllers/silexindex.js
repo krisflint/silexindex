@@ -7,6 +7,10 @@ var Index = mongoose.model('Index');
 
 var User = mongoose.model('User');
 
+var session = require('express-session');
+
+var md5 = require('MD5');
+
 module.exports = {
 
 	createindex: function(req, res){
@@ -16,6 +20,7 @@ module.exports = {
 			contact: req.body.contact,
 			phone: req.body.phone,
 			email: req.body.email,
+			web: req.body.web,
 			street: req.body.street,
 			city: req.body.city,
 			state: req.body.state,
@@ -39,42 +44,204 @@ module.exports = {
 		})
 	},
 
-	// retrievecount: function(req, res){
-	// 	console.log(req)
-
-	// 	Index.count({metroarea: req.body.metroarea,
-	// 				 brand: req.body.brand,
-	// 				 design: req.body.design,
-	// 				 ad: req.body.ad,
-	// 				 av: req.body.av,
-	// 				 pr: req.body.pr,
-	// 				 media: req.body.media},function(err, count){
-	// 		if(err){
-	// 			console.log('db retrievecount error')
-	// 		}
-	// 		else{
-	// 			console.log('db retrievecount success')
-	// 			res.json(count)
-	// 		}
-	// 	})
-	// },
+	retrievecountall: function(req, res){
+		console.log(req.body)
+		var count = 0
+		if(req.body.metroarea === 'all'){
+			Index.find({}, function(err, result){
+				if(err){
+					console.log('db count all metro all error');
+				}
+				else{
+					for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+					console.log('db count all metro all capabilities none success', count);
+					res.json(count)
+					}
+			})		
+		}
+		else{
+			Index.find({metroarea: req.body.metroarea}, function(err, result){
+				if(err){
+					console.log('db count all metroarea specific error')
+				}
+				else{
+					for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+					console.log('db count all metro specific capabilities none success', count);
+					res.json(count)
+					}
+			})
+		}
+	},
 
 	retrievecount: function(req, res){
 		// console.log(req.body.industry)
 		// console.log(req.body.metroarea)
+		console.log(req.body)
 		var count = 0
 		if(req.body.metroarea === 'all'){
+			if(req.body.brand === true && req.body.design === undefined && req.body.ad === undefined &&
+				req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({brand: req.body.brand}, function(err, result){
+					if(err){
+						console.log('db count metro all brand only error');
+					}
+					else{
+						console.log(result)
+						for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+					console.log('db count metro all brand only success');
+					res.json(count)
+					}
+				})
+			}
+			else if(req.body.brand === undefined && req.body.design === true && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({design: req.body.design}, function(err, result){
+					if(err){
+						console.log('db count metro all design only error')
+					}
+					else{
+						console.log(result)
+						for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+						console.log('db count metro all design only success', count)	
+						res.json(count)
+					}
+				})
+			}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === true &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({ad: req.body.ad}, function(err, result){
+					if(err){
+						console.log('db count metro all ad only error')
+					}
+					else{
+						console.log(result)
+						for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+						console.log('db count metro all ad only success', count)	
+						res.json(count)
+					}
+				})
+
+			}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === true && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({av: req.body.av}, function(err, result){
+					if(err){
+						console.log('db count metro all av only error')
+					}
+					else{
+						console.log(result)
+						for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+						console.log('db count metro all av only success', count)	
+						res.json(count)
+					}
+				})
+			}		
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === true && req.body.media === undefined){
+				Index.find({pr: req.body.pr}, function(err, result){
+					if(err){
+						console.log('db count metro all pr only error')
+					}
+					else{
+						console.log(result)
+						for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+						console.log('db count metro all pr only success', count)	
+						res.json(count)
+					}
+				})
+			}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === true){
+				Index.find({media: req.body.media}, function(err, result){
+					if(err){
+						console.log('db count metro all media only error')
+					}
+					else{
+						console.log(result)
+						for(var i = 0; i<result.length; i++){
+						console.log(result[i].industries)
+							for(var j = 0; j<result[i].industries.length; j++){
+								console.log(result[i].industries[j])
+								if(result[i].industries[j] === req.body.industry){
+								count++
+								}
+							}
+						}
+						console.log('db count metro all media only success', count)	
+						res.json(count)
+					}
+				})
+			}
+			else{
 			Index.find({brand: req.body.brand,
 						design: req.body.design,
 						ad: req.body.ad,
 						av: req.body.av,
 						pr: req.body.pr,
-						media: req.body.media}, function(err, result){
+						media: req.body.media
+
+						}, function(err, result){
 						if(err){
 							console.log('db count all error')
 						}
 						else{
-							// console.log(result)
+							console.log(result)
 							for(var i = 0; i<result.length; i++){
 								console.log(result[i].industries)
 								for(var j = 0; j<result[i].industries.length; j++){
@@ -84,19 +251,182 @@ module.exports = {
 									}
 								}
 							}
-							console.log('db count all success')
+							console.log('db count metro all capabilities all success', count)
 							res.json(count)
 						}
 					})
+				}
 		}
 		else{
-			Index.find({metroarea: req.body.metroarea,
-					 	brand: req.body.brand,
-					 	design: req.body.design,
-					 	ad: req.body.ad,
-					 	av: req.body.av,
-					 	pr: req.body.pr,
-					 	media: req.body.media}, function(err, result){
+			if(req.body.brand === true && req.body.design === undefined && req.body.ad === undefined &&
+				req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({metroarea: req.body.metroarea,
+					 	    brand: req.body.brand}, function(err, result){
+				 		if(err){
+				 			console.log('db count metroarea specific brand only error')
+				 		}
+				 		else{
+				 			console.log(result)
+				 			for(var i = 0; i<result.length; i++){
+				 				console.log(result[i].industries)
+				 				for(var j = 0; j<result[i].industries.length; j++){
+				 					console.log(result[i].industries[j])
+				 					if(result[i].industries[j] === req.body.industry){
+				 						count++
+				 					}
+				 				}
+				 			}
+					 		console.log('db count metroarea specific brand only success', count)
+					 		res.json(count)
+				 		}
+				 	})
+				}
+			else if(req.body.brand === undefined && req.body.design === true && req.body.ad === undefined &&
+				req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({metroarea: req.body.metroarea,
+					 	    design: req.body.design}, function(err, result){
+				 		if(err){
+				 			console.log('db count metroarea specific design only error')
+				 		}
+				 		else{
+				 			console.log(result)
+				 			for(var i = 0; i<result.length; i++){
+				 				console.log(result[i].industries)
+				 				for(var j = 0; j<result[i].industries.length; j++){
+				 					console.log(result[i].industries[j])
+				 					if(result[i].industries[j] === req.body.industry){
+				 						count++
+				 					}
+				 				}
+				 			}
+					 		console.log('db count metroarea specific design only success', count)
+					 		res.json(count)
+				 		}
+				 	})
+				}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === true &&
+				req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({metroarea: req.body.metroarea,
+					 	    ad: req.body.ad}, function(err, result){
+				 		if(err){
+				 			console.log('db count metroarea specific ad only error')
+				 		}
+				 		else{
+				 			console.log(result)
+				 			for(var i = 0; i<result.length; i++){
+				 				console.log(result[i].industries)
+				 				for(var j = 0; j<result[i].industries.length; j++){
+				 					console.log(result[i].industries[j])
+				 					if(result[i].industries[j] === req.body.industry){
+				 						count++
+				 					}
+				 				}
+				 			}
+					 		console.log('db count metroarea specific ad only success', count)
+					 		res.json(count)
+				 		}
+				 	})
+				}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === true &&
+				req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({metroarea: req.body.metroarea,
+					 	    ad: req.body.ad}, function(err, result){
+				 		if(err){
+				 			console.log('db count metroarea specific ad only error')
+				 		}
+				 		else{
+				 			console.log(result)
+				 			for(var i = 0; i<result.length; i++){
+				 				console.log(result[i].industries)
+				 				for(var j = 0; j<result[i].industries.length; j++){
+				 					console.log(result[i].industries[j])
+				 					if(result[i].industries[j] === req.body.industry){
+				 						count++
+				 					}
+				 				}
+				 			}
+					 		console.log('db count metroarea specific ad only success', count)
+					 		res.json(count)
+				 		}
+				 	})
+				}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+				req.body.av === true && req.body.pr === undefined && req.body.media === undefined){
+				Index.find({metroarea: req.body.metroarea,
+					 	    av: req.body.av}, function(err, result){
+				 		if(err){
+				 			console.log('db count metroarea specific av only error')
+				 		}
+				 		else{
+				 			console.log(result)
+				 			for(var i = 0; i<result.length; i++){
+				 				console.log(result[i].industries)
+				 				for(var j = 0; j<result[i].industries.length; j++){
+				 					console.log(result[i].industries[j])
+				 					if(result[i].industries[j] === req.body.industry){
+				 						count++
+				 					}
+				 				}
+				 			}
+					 		console.log('db count metroarea specific av only success', count)
+					 		res.json(count)
+				 		}
+				 	})
+				}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+				req.body.av === undefined && req.body.pr === true && req.body.media === undefined){
+				Index.find({metroarea: req.body.metroarea,
+					 	    pr: req.body.pr}, function(err, result){
+				 		if(err){
+				 			console.log('db count metroarea specific pr only error')
+				 		}
+				 		else{
+				 			console.log(result)
+				 			for(var i = 0; i<result.length; i++){
+				 				console.log(result[i].industries)
+				 				for(var j = 0; j<result[i].industries.length; j++){
+				 					console.log(result[i].industries[j])
+				 					if(result[i].industries[j] === req.body.industry){
+				 						count++
+				 					}
+				 				}
+				 			}
+					 		console.log('db count metroarea specific pr only success', count)
+					 		res.json(count)
+				 		}
+				 	})
+				}
+			else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+				req.body.av === undefined && req.body.pr === undefined && req.body.media === true){
+				Index.find({metroarea: req.body.metroarea,
+					 	    media: req.body.media}, function(err, result){
+				 		if(err){
+				 			console.log('db count metroarea specific media only error')
+				 		}
+				 		else{
+				 			console.log(result)
+				 			for(var i = 0; i<result.length; i++){
+				 				console.log(result[i].industries)
+				 				for(var j = 0; j<result[i].industries.length; j++){
+				 					console.log(result[i].industries[j])
+				 					if(result[i].industries[j] === req.body.industry){
+				 						count++
+				 					}
+				 				}
+				 			}
+					 		console.log('db count metroarea specific media only success', count)
+					 		res.json(count)
+				 		}
+				 	})
+				}							
+				else{
+					Index.find({metroarea: req.body.metroarea,
+						 	brand: req.body.brand,
+						 	design: req.body.design,
+						 	ad: req.body.ad,
+						 	av: req.body.av,
+						 	pr: req.body.pr,
+						 	media: req.body.media}, function(err, result){
 				 		if(err){
 				 			console.log('db count metroarea error')
 				 		}
@@ -115,69 +445,364 @@ module.exports = {
 					 		res.json(count)
 				 		}
 				 	})
+				}
 		}
 	},
 
 	retrieveclientsearch: function(req, res){
-		// console.log(req)
+		console.log(req.body)
+
+		console.log(session.authenticate)
+		// if(!session.authenticate) res.redirect('/partials/login.html')
 
 		var searchresult = []
-
-		if(req.body.metroarea === 'all'){
-			Index.find({brand: req.body.brand,
-						design: req.body.design,
-						ad: req.body.ad,
-						av: req.body.av,
-						pr: req.body.pr,
-						media: req.body.media}, function(err, result){
-						if(err){
-							console.log('db retrieveUserSearch all error')
-						}
-						else{
-							console.log(result)
-							for(var i = 0; i<result.length; i++){
-								console.log(result[i].industries)
-								for(var j = 0; j<result[i].industries.length; j++){
-									console.log(result[i].industries[j])
-									if(result[i].industries[j] === req.body.industry){
-										searchresult.push(result[i]);
+		if(session.authenticate === true){
+			if(req.body.metroarea === 'all'){
+				if(req.body.brand === true && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({brand: req.body.brand}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea all brand only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
 									}
 								}
+								console.log('db retrieveUserSearch metroarea all brand only success')
+								console.log(searchresult)
+								res.json(searchresult)
 							}
-							console.log('db retrieveUserSearch all success')
-							console.log(searchresult)
-							res.json(searchresult)
-						}
-					})
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === true && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({design: req.body.design}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea all design only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metro area all design only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === true &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({ad: req.body.ad}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea all ad only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metro all ad only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === true && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({av: req.body.av}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea all av only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metro all av only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === true && req.body.media === undefined){
+					Index.find({pr: req.body.pr}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea all pr only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metro all pr only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === true){
+					Index.find({media: req.body.media}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea all media only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metro all media only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else{
+					Index.find({contact: req.body.contact,
+								brand: req.body.brand,
+								design: req.body.design,
+								ad: req.body.ad,
+								av: req.body.av,
+								pr: req.body.pr,
+								media: req.body.media}, function(err, result){
+								if(err){
+									console.log('db retrieveUserSearch metro all error')
+								}
+								else{
+									console.log(result)
+									for(var i = 0; i<result.length; i++){
+										console.log(result[i].industries)
+										for(var j = 0; j<result[i].industries.length; j++){
+											console.log(result[i].industries[j])
+											if(result[i].industries[j] === req.body.industry){
+												searchresult.push(result[i]);
+											}
+										}
+									}
+									console.log('db retrieveUserSearch metro all success')
+									console.log(searchresult)
+									res.json(searchresult)
+								}
+							})
+				}
+			}
+			else{
+				if(req.body.brand === true && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({metroarea: req.body.metroarea,
+								brand: req.body.brand}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea specific brand only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metroarea specific brand only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === true && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({metroarea: req.body.metroarea,
+								design: req.body.design}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea specific design only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metroarea specific design only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === true &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({metroarea: req.body.metroarea,
+								ad: req.body.ad}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea specific ad only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metroarea specific ad only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === true && req.body.pr === undefined && req.body.media === undefined){
+					Index.find({metroarea: req.body.metroarea,
+								av: req.body.av}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea specific av only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metroarea specific av only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === true && req.body.media === undefined){
+					Index.find({metroarea: req.body.metroarea,
+								pr: req.body.pr}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea specific pr only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metroarea specific pr only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}
+				else if(req.body.brand === undefined && req.body.design === undefined && req.body.ad === undefined &&
+					req.body.av === undefined && req.body.pr === undefined && req.body.media === true){
+					Index.find({metroarea: req.body.metroarea,
+								media: req.body.media}, function(err, result){
+					 		if(err){
+					 			console.log('db retrieveUserSearch metroarea specific media only error')
+					 		}
+							else{
+								console.log(result)
+								for(var i = 0; i<result.length; i++){
+									console.log(result[i].industries)
+									for(var j = 0; j<result[i].industries.length; j++){
+										console.log(result[i].industries[j])
+										if(result[i].industries[j] === req.body.industry){
+											searchresult.push(result[i]);
+										}
+									}
+								}
+								console.log('db retrieveUserSearch metroarea specific media only success')
+								console.log(searchresult)
+								res.json(searchresult)
+							}
+					 	})
+					}			
+				else{
+					Index.find({metroarea: req.body.metroarea,
+							 	brand: req.body.brand,
+							 	design: req.body.design,
+							 	ad: req.body.ad,
+							 	av: req.body.av,
+							 	pr: req.body.pr,
+							 	media: req.body.media}, function(err, result){
+						 		if(err){
+						 			console.log('db retrieveclientsearch metroarea error')
+						 		}
+						 		else{
+						 			console.log(result)
+						 			for(var i = 0; i<result.length; i++){
+						 				console.log(result[i].industries)
+						 				for(var j = 0; j<result[i].industries.length; j++){
+						 					console.log(result[i].industries[j])
+						 					if(result[i].industries[j] === req.body.industry){
+						 						searchresult.push(result[i]);
+						 					}
+						 				}
+						 			}
+							 		console.log('db retrieveclientsearch metroarea success')
+							 		res.json(searchresult)
+						 		}
+						 	})
+					}
+			}
 		}
 		else{
-			Index.find({metroarea: req.body.metroarea,
-					 	brand: req.body.brand,
-					 	design: req.body.design,
-					 	ad: req.body.ad,
-					 	av: req.body.av,
-					 	pr: req.body.pr,
-					 	media: req.body.media}, function(err, result){
-				 		if(err){
-				 			console.log('db retrieveclientsearch metroarea error')
-				 		}
-				 		else{
-				 			console.log(result)
-				 			for(var i = 0; i<result.length; i++){
-				 				console.log(result[i].industries)
-				 				for(var j = 0; j<result[i].industries.length; j++){
-				 					console.log(result[i].industries[j])
-				 					if(result[i].industries[j] === req.body.industry){
-				 						searchresult.push(result[i]);
-				 					}
-				 				}
-				 			}
-					 		console.log('db retrieveclientsearch metroarea success')
-					 		res.json(searchresult)
-				 		}
-				 	})
+			var info = {error: true}
+			res.json(info)
 		}
-
 	},
 
 	createuser: function(req, res){
@@ -210,15 +835,46 @@ module.exports = {
 	},
 
 	retrieveusers: function(req, res){
-		User.find({}, function(err, result){
-			if(err){
-				console.log('db retrieve all users error')
-			}
-			else{
-				console.log('db retrieve all users success')
-				res.json(result)
-			}
-		})
+
+		console.log(session.authenticate)
+
+		if(session.authenticate === true){ 
+			User.find({}, function(err, result){
+				if(err){
+					console.log('db retrieve all users error')
+				}
+				else{
+					console.log('db retrieve all users success')
+					res.json(result)
+				}
+			})
+		}
+		else{
+			var info = {error: true}
+			res.json(info)
+		}
+	},
+
+	authenticateadmin: function(req, res){
+
+		console.log(md5(req.body.password));		
+
+		var passwordentered = md5(req.body.password)
+
+		var username = 'krisflint'
+		var password = 'c534bf3af59e632e87a0cc9f5ea4e29d'
+
+
+		if(username === req.body.username && password === passwordentered){
+			session.authenticate = true
+			console.log(session.authenticate)
+			res.redirect('/partials/F2A712BEBB3893C6.html')
+		}
+		else{
+			res.redirect('/partials/login.html')
+		}
+
+		console.log(req.body);
 	}
 
 }

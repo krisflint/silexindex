@@ -1,14 +1,14 @@
 {
   "name": "silexIndex",
-  
   "dependencies": {
+    "MD5": "^1.2.1",
     "body-parser": "^1.10.1",
     "ejs": "1.0.0",
     "express": "^4.10.0",
+    "express-session": "^1.10.4",
     "mongoose": "^3.8.21"
   },
-
-   "engines": {
+  "engines": {
     "node": "0.10.x"
-	}
+  }
 }

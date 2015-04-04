@@ -23,6 +23,13 @@ module.exports = function(app){
 		silexindex.retrieveclientsearch(req, res)
 	})
 
+	app.post('/retrievecountall', function(req, res){
+		silexindex.retrievecountall(req, res)
+	})
+
+	app.post('/partials/authenticate', function(req, res){
+		silexindex.authenticateadmin(req, res)
+	})
 
 
 

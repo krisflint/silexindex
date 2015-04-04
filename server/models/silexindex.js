@@ -5,6 +5,12 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
+// var adminSchema = new mongoose.Schema({
+// 	username: String,
+// 	password: String
+// });
+// mongoose.model('Admin', adminSchema)
+
 var indexSchema = new mongoose.Schema({
 
 	firmname: String,

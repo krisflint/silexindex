@@ -26,7 +26,7 @@ silexIndexModule.factory('silexFactory', function ($http){
 	var newfirm = {}
 
 	factory.retrieveCount = function(info, callback){
-		// console.log(info);
+		console.log(info);
 		firmSearch.industry = info.industry;
 		firmSearch.metroarea = info.metroarea;
 		firmSearch.brand = info.brand;
@@ -80,6 +80,18 @@ silexIndexModule.factory('silexFactory', function ($http){
 			firmSearch.count = count;
 			callback()
 		})
+	}
+
+	factory.retrieveCountAll = function(info, callback){
+		firmSearch.industry = info.industry;
+		firmSearch.metroarea = info.metroarea;
+		firmSearch.category1 = 'Select the capability categories above that apply to your project or campaign to narrow your search.';
+		$http.post('/retrievecountall',
+					{industry: info.industry,
+					 metroarea: info.metroarea}).success(function(count){
+					 firmSearch.count = count;
+					 callback()
+	 	})
 	}
 
 	factory.retrieveClientSearch = function(info, callback){
@@ -163,6 +175,15 @@ silexIndexModule.factory('silexFactory', function ($http){
 			})
 	}
 
+
+	factory.retrieveadmin = function(info, callback){
+		$http.post('/retrieveadmin', 
+			{username: info.username,
+			 password: info.password}).success(function(output){
+			 	console.log(output)
+			 })
+	}
+
 	return factory;
 });
 
@@ -179,21 +200,40 @@ silexIndexModule.controller('retrieveController', function ($scope, silexFactory
 	$scope.firm.industry = ''
 	$scope.firm.metroarea = ''
 
-	$scope.firm.brand = false
-	$scope.firm.design = false
-	$scope.firm.ad = false
-	$scope.firm.pr = false
-	$scope.firm.av = false
-	$scope.firm.media = false
+	$scope.firm.brand = undefined
+	$scope.firm.design = undefined
+	$scope.firm.ad = undefined
+	$scope.firm.pr = undefined
+	$scope.firm.av = undefined
+	$scope.firm.media = undefined
 
 	$scope.retrieveCount = function(){
 
-		if ($scope.firm.brand === false && $scope.firm.design === false && $scope.firm.ad === false &&
-			$scope.firm.pr === false && $scope.firm.av === false && $scope.firm.media === false){
-			$scope.searchFirmCapabilityError = true;
-			$scope.searchFirmSuccessShowUserForm = false;
+		if ($scope.firm.brand === false) {
+			$scope.firm.brand = undefined
 		}
-		else if ($scope.firm.industry === ''){
+		if ($scope.firm.design === false) {
+			$scope.firm.design = undefined
+		}
+		if ($scope.firm.ad === false) {
+			$scope.firm.ad = undefined
+		}
+		if ($scope.firm.pr === false) {
+			$scope.firm.pr = undefined
+		}
+		if ($scope.firm.av === false) {
+			$scope.firm.av = undefined
+		}
+		if ($scope.firm.media === false){
+			$scope.firm.media = undefined
+		}
+
+		// if ($scope.firm.brand === undefined && $scope.firm.design === undefined && $scope.firm.ad === undefined &&
+		// 	$scope.firm.pr === undefined && $scope.firm.av === undefined && $scope.firm.media === undefined){
+		// 	$scope.searchFirmCapabilityError = true;
+		// 	$scope.searchFirmSuccessShowUserForm = false;
+		// }
+		if ($scope.firm.industry === ''){
 			$scope.searchFirmIndustryError = true
 			$scope.searchFirmCapabilityError = false
 			$scope.searchFirmCityError = false;
@@ -205,22 +245,37 @@ silexIndexModule.controller('retrieveController', function ($scope, silexFactory
 			$scope.searchFirmIndustryError = false
 			$scope.searchFirmSuccessShowUserForm = false;
 		}
+		else if($scope.firm.brand === undefined && $scope.firm.design === undefined && $scope.firm.ad === undefined &&
+			$scope.firm.pr === undefined && $scope.firm.av === undefined && $scope.firm.media === undefined){
+			$scope.searchFirmIndustryError = false
+			$scope.searchFirmCityError = false;
+			$scope.searchFirmSuccessShowUserForm = true;
+			silexFactory.retrieveCountAll($scope.firm, function (info){
+				console.log($scope.firm);
+				$scope.firm = {};
+				$scope.firm.industry = ''
+				$scope.firm.metroarea = ''
+				console.log($scope.firm)
+				$scope.result = {}
+			})
+		}
 		else{
 			$scope.searchFirmCapabilityError = false
 			$scope.searchFirmIndustryError = false
 			$scope.searchFirmCityError = false;
 			$scope.searchFirmSuccessShowUserForm = true;
+			console.log($scope.firm)
 			silexFactory.retrieveCount($scope.firm, function (info){		
 				console.log($scope.firm)
 				$scope.firm = {};
 				$scope.firm.industry = ''
 				$scope.firm.metroarea = ''
-				$scope.firm.brand = false
-				$scope.firm.design = false
-				$scope.firm.ad = false
-				$scope.firm.pr = false
-				$scope.firm.av = false
-				$scope.firm.media = false
+				$scope.firm.brand = undefined
+				$scope.firm.design = undefined
+				$scope.firm.ad = undefined
+				$scope.firm.pr = undefined
+				$scope.firm.av = undefined
+				$scope.firm.media = undefined
 				console.log($scope.firm)
 				$scope.result = {}
 			})
@@ -229,21 +284,28 @@ silexIndexModule.controller('retrieveController', function ($scope, silexFactory
 });
 
 // admin dashboard controller
-silexIndexModule.controller('retrieveClientSearch', function ($scope, silexFactory){
+silexIndexModule.controller('retrieveClientSearch', function ($scope, $location, silexFactory){
 
 	$scope.firm = {}
-	$scope.firm.brand = false
-	$scope.firm.design = false
-	$scope.firm.ad = false
-	$scope.firm.pr = false
-	$scope.firm.av = false
-	$scope.firm.media = false
+	$scope.firm.brand = undefined
+	$scope.firm.design = undefined
+	$scope.firm.ad = undefined
+	$scope.firm.pr = undefined
+	$scope.firm.av = undefined
+	$scope.firm.media = undefined
 
 	$scope.result = {}
 
 	silexFactory.retrieveUsers(function (info){
+		// console.log(info.error)
+		// if(info.error === true || info.error === undefined){
+		// 	console.log(info.error)
+		// 	$location.path('http://localhost:8888/partials/login.html')
+		// }
+		// else{
 		$scope.users = info
 		console.log($scope.users)
+		// }
 	})
 
 	$scope.retrieveClientSearch = function (){
@@ -253,12 +315,12 @@ silexIndexModule.controller('retrieveClientSearch', function ($scope, silexFacto
 			$scope.result = info;
 			console.log($scope.result)
 			$scope.firm = {}
-			$scope.firm.brand = false
-			$scope.firm.design = false
-			$scope.firm.ad = false
-			$scope.firm.pr = false
-			$scope.firm.av = false
-			$scope.firm.media = false
+			$scope.firm.brand = undefined
+			$scope.firm.design = undefined
+			$scope.firm.ad = undefined
+			$scope.firm.pr = undefined
+			$scope.firm.av = undefined
+			$scope.firm.media = undefined
 		})
 	}
 });
@@ -271,7 +333,6 @@ silexIndexModule.controller('searchResultController', function ($scope, silexFac
 	$scope.result = {}
 	
 	silexFactory.retrieveFirmSearch(function (info){
-		// console.log(info);
 		$scope.result = info;
 	})
 
@@ -327,15 +388,17 @@ silexIndexModule.controller('createController', function ($scope, silexFactory){
 	$scope.createSuccess = false
 	$scope.createIndustrySelectError = false
 	$scope.createError = false
+
 	$scope.newfirm = {}
-	$scope.newfirm.brand = false
-	$scope.newfirm.design = false
-	$scope.newfirm.ad = false
-	$scope.newfirm.av = false
-	$scope.newfirm.pr = false
-	$scope.newfirm.media = false
+	$scope.newfirm.brand = undefined
+	$scope.newfirm.design = undefined
+	$scope.newfirm.ad = undefined
+	$scope.newfirm.av = undefined
+	$scope.newfirm.pr = undefined
+	$scope.newfirm.media = undefined
 
 	$scope.hideIndustries = true
+
 	$scope.selectAllIndustries = function(){
 		if($scope.hideIndustries === true){
 			$scope.hideIndustries = false
@@ -350,9 +413,9 @@ silexIndexModule.controller('createController', function ($scope, silexFactory){
 
 		$scope.createSuccess = false;
 
-		if($scope.newfirm.brand === false && $scope.newfirm.design === false && 
-			$scope.newfirm.ad === false && $scope.newfirm.pr === false && 
-			$scope.newfirm.av === false && $scope.newfirm.media === false){
+		if($scope.newfirm.brand === undefined && $scope.newfirm.design === undefined && 
+			$scope.newfirm.ad === undefined && $scope.newfirm.pr === undefined && 
+			$scope.newfirm.av === undefined && $scope.newfirm.media === undefined){
 				$scope.createError = true;
 		}
 		if($scope.newfirm.industry1 === $scope.newfirm.industry2 || 
@@ -371,6 +434,19 @@ silexIndexModule.controller('createController', function ($scope, silexFactory){
 			})
 		}
 	}
+});
+
+
+silexIndexModule.controller('retrieveAdminLogin', function ($scope, silexFactory){
+
+	$scope.authenticateAdmin = function (){
+		console.log($scope.login)
+		silexFactory.retrieveadmin($scope.login, function (info){
+
+		})
+
+	}
+
 });
 
 
